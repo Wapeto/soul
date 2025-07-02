@@ -1,0 +1,15 @@
+# S.O.U.L
+
+(Social Observation of Unconcious Life)
+
+## Potentisal file structure
+
+```python
+soul/
+├── main.py           # Simulation loop
+├── person.py         # Person class and mood logic
+├── world.py          # World, social environment
+├── event.py          # Event generation logic
+├── utils.py          # Helper functions
+├── log.py (optional) # Logging / save / load
+```
