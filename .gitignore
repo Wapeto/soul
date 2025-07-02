@@ -5,3 +5,6 @@
 /Scripts/
 /pyvenv.cfg
 /__pycache__/
+/share/
+
+/simulation_data/

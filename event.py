@@ -5,15 +5,21 @@ from person import Person
 events = ['eat', 'read', 'nap']
 
 def choose_random_event(p:Person):
-    if p.event_cooldown != 0 : return
+    if p.event_cooldown != 0 :
+        # print(f"{p.name} is on cooldown for {p.event_cooldown} ticks.") # Optional: for debugging
+        
+        return None # Return None if no event is chosen due to cooldown
 
     event = random.choice(events)
-    
+
     match event:
         case 'eat':
             p.eat()
         case 'read':
             p.read()
+        case 'nap':
+            p.nap()
+    return event
 
 def update_event_cooldowns(world:World):
     for p in world.people:
