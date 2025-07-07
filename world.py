@@ -11,9 +11,11 @@ class World:
     on_tick_update = Event()
 
     def update_tick_counter(self):
+        self.day = self.tick_counter // 24
+    
         self.tick_counter += 1
         self.on_tick_update.fire()
 
     def print_date(self):
-        time = self.tick_counter if self.tick_counter > 10 else "0"+str(self.tick_counter)
-        print(f"\nDay: {self.day} Time: {time}:00\n")
+        time = self.tick_counter if self.tick_counter//24 > 10 else "0"+str(self.tick_counter//24)
+        print(f"\nDay: {self.day} Time: {time}:00 Tick: {self.tick_counter}\n")

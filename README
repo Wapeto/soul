@@ -12,4 +12,8 @@ soul/
 ├── event.py          # Event generation logic
 ├── utils.py          # Helper functions
 ├── log.py (optional) # Logging / save / load
+
 ```
+
+## Ideas
+- **Activities**: People have different effects when they do an activity : for example person A will gain between 0 and 10 happiness when they go to the cinema, while person B will gain between 0 and 5 happiness.

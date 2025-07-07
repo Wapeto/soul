@@ -28,3 +28,16 @@ class Person:
         self.energy = min(self.energy + 30, 100)
         print(f"{self.name} just took a nap")
 
+    def socialize(self, other: 'Person'):
+        if other.name not in self.relationships:
+            self.relationships[other.name] = 0
+        self.relationships[other.name] += 1
+        self.mood = min(self.mood + 15, 100)
+        other.mood = min(other.mood + 15, 100)
+        self.event_cooldown = 5
+        print(f"{self.name} socialized with {other.name}")
+
+    def natural_drain(self):
+        self.energy = max(self.energy - 5, 0)
+        self.mood = max(self.mood - 2, 0)
+

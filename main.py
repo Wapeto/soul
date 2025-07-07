@@ -3,14 +3,13 @@ from world import World
 from utils import *
 from event import *
 import random
-from log import Logger, save_simulation_data, plot_mood_trends, plot_energy_trends
-
+# Import plot_all_trends instead of the individual plotting functions
+from log import Logger, save_simulation_data, plot_all_trends
 
 
 def generate_people(n:int):
     people = []
     for i in range(n):
-        # name = generate_random_name()
         p = Person(generate_random_name(), random.randint(18,55))
         people.append(p)
     return people
@@ -23,7 +22,7 @@ def main_loop():
     for p in world.people:
         print(p)
 
-    while world.tick_counter < 24: # Simulating 24 hours
+    while world.day < 5: # Simulating 24 hours
         world.print_date()
 
         # Record initial state for the tick
@@ -33,10 +32,8 @@ def main_loop():
         for p in world.people:
             # Add a log entry for chosen event
             chosen_event_name = choose_random_event(p)
-            if chosen_event_name: # Only log if an event actually occurred
+            if chosen_event_name: # Only log if an event actually occurred  
                 logger.log_event("action", f"{p.name} performed {chosen_event_name}", p.name, {"mood_before": p.mood, "energy_before": p.energy})
-                # Note: mood/energy changes happen inside the person's method.
-                # The next call to record_person_state will capture the new state.
 
         update_event_cooldowns(world)
         world.update_tick_counter()
@@ -49,9 +46,7 @@ def main_loop():
     save_simulation_data(world, "final_simulation_state.json")
     logger.save_logs_to_file("detailed_simulation_events.json")
 
-    plot_mood_trends(logger)
-    plot_energy_trends(logger)
-
+    plot_all_trends(logger, world) # Call the new combined plotting function
 
 
 if __name__ == "__main__":

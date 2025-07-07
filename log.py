@@ -73,7 +73,7 @@ class Logger:
         self.person_energy_history = defaultdict(lambda: defaultdict(int))
 
 
-def save_simulation_data(world, filename: str = "simulation_snapshot.json"):
+def save_simulation_data(world: World, filename: str = "simulation_snapshot.json"):
     """
     Saves the current state of the entire simulation (World and all People) to a JSON file.
     :param world: The World object representing the current state of the simulation.
@@ -104,48 +104,60 @@ def save_simulation_data(world, filename: str = "simulation_snapshot.json"):
     print(f"Simulation snapshot saved to {filepath}")
 
 
-def plot_mood_trends(logger: Logger, title: str = "Mood Trends Over Time"):
-    """
-    Generates and displays a plot of mood trends for all people over simulation ticks.
-    :param logger: The Logger instance containing mood history data.
-    :param title: The title of the plot.
-    """
-    mood_history = logger.get_mood_history()
-
-    plt.figure(figsize=(12, 7))
-    for person_name, history in mood_history.items():
-        ticks = sorted(history.keys())
-        moods = [history[tick] for tick in ticks]
-        plt.plot(ticks, moods, label=person_name, marker='o', markersize=4)
-
-    plt.title(title)
-    plt.xlabel("Simulation Tick")
-    plt.ylabel("Mood")
-    plt.ylim(0, 100) # Mood typically ranges from 0 to 100
-    plt.grid(True, linestyle='--', alpha=0.7)
-    plt.legend(title="People")
-    plt.tight_layout()
-    plt.show()
-
-def plot_energy_trends(logger: Logger, title: str = "Energy Trends Over Time"):
-    """
-    Generates and displays a plot of energy trends for all people over simulation ticks.
-    :param logger: The Logger instance containing energy history data.
-    :param title: The title of the plot.
-    """
+def plot_all_trends(logger, world):
+    mood_history   = logger.get_mood_history()
     energy_history = logger.get_energy_history()
 
-    plt.figure(figsize=(12, 7))
-    for person_name, history in energy_history.items():
-        ticks = sorted(history.keys())
-        energies = [history[tick] for tick in ticks]
-        plt.plot(ticks, energies, label=person_name, marker='x', markersize=4)
+    TICKS_PER_DAY = 24
 
-    plt.title(title)
-    plt.xlabel("Simulation Tick")
-    plt.ylabel("Energy")
-    plt.ylim(0, 100) # Energy typically ranges from 0 to 100
-    plt.grid(True, linestyle='--', alpha=0.7)
-    plt.legend(title="People")
-    plt.tight_layout()
+    # --- process into daily averages ---
+    def compute_daily_avg(raw):
+        daily = defaultdict(lambda: defaultdict(list))
+        for name, hist in raw.items():
+            for tick, val in hist.items():
+                day = tick // TICKS_PER_DAY
+                daily[name][day].append(val)
+        # average
+        for name, days in daily.items():
+            for d, vals in days.items():
+                days[d] = sum(vals) / len(vals)
+        return daily
+
+    daily_mood   = compute_daily_avg(mood_history)
+    daily_energy = compute_daily_avg(energy_history)
+
+    if not daily_mood and not daily_energy:
+        print("No data to plot.")
+        return
+
+    # ——— Figure 1: Mood ———
+    fig1, ax1 = plt.subplots(figsize=(10, 6))
+    for name, days in daily_mood.items():
+        x = sorted(days.keys())
+        y = [days[d] for d in x]
+        ax1.plot(x, y, marker='o', label=name)
+    ax1.set_title("Average Daily Mood Trends")
+    ax1.set_xlabel("Day")
+    ax1.set_ylabel("Average Mood")
+    ax1.set_ylim(0, 100)
+    ax1.grid(True, linestyle='--', alpha=0.5)
+    ax1.legend(title="People")
+    # give the window a clear title
+    fig1.canvas.manager.set_window_title("SOUL – Mood Trends")
+
+    # ——— Figure 2: Energy ———
+    fig2, ax2 = plt.subplots(figsize=(10, 6))
+    for name, days in daily_energy.items():
+        x = sorted(days.keys())
+        y = [days[d] for d in x]
+        ax2.plot(x, y, marker='x', label=name)
+    ax2.set_title("Average Daily Energy Trends")
+    ax2.set_xlabel("Day")
+    ax2.set_ylabel("Average Energy")
+    ax2.set_ylim(0, 100)
+    ax2.grid(True, linestyle='--', alpha=0.5)
+    ax2.legend(title="People")
+    fig2.canvas.manager.set_window_title("SOUL – Energy Trends")
+
+    # — show both windows simultaneously —
     plt.show()
