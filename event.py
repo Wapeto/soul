@@ -2,7 +2,7 @@ import random
 from world import World
 from person import Person
 
-events = ['eat', 'read', 'nap', 'socialize']
+events = ['eat', 'read', 'nap', 'perform_task', 'socialize']
 
 def choose_random_event(p: Person, world: World):
     if p.event_cooldown != 0:
@@ -25,7 +25,14 @@ def choose_random_event(p: Person, world: World):
                 p.socialize(other)
             else:
                 event = None
-    return event
+
+        case 'perform_task':
+            if p.tasks:
+                idx = random.randrange(len(p.tasks))
+                p.complete_task(idx)
+            else:
+                p.add_task("General task")
+   return event
 
 def update_event_cooldowns(world:World):
     for p in world.people:
