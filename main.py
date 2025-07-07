@@ -45,6 +45,7 @@ def main_loop():
     # After the loop, save data and plot graphs
     save_simulation_data(world, "final_simulation_state.json")
     logger.save_logs_to_file("detailed_simulation_events.json")
+    logger.export_daily_statistics("daily_statistics.json")
 
     plot_all_trends(logger, world) # Call the new combined plotting function
 
