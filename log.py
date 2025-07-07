@@ -91,7 +91,8 @@ def save_simulation_data(world: World, filename: str = "simulation_snapshot.json
             "age": p.age,
             "mood": p.mood,
             "energy": p.energy,
-            "relationships": p.relationships, # Assuming relationships are simple dicts
+            # Relationships are maintained via Person helper methods
+            "relationships": p.relationships,
             "event_cooldown": p.event_cooldown
         }
         simulation_data["people"].append(person_data)
