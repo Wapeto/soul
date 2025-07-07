@@ -1,19 +1,125 @@
-# S.O.U.L
+# SOUL (Social Observation of Unconscious Life)
 
-(Social Observation of Unconcious Life)
+**A modular, text-based social psychology simulator in Python**  
+SOUL lets you generate a community of agents whose moods, energy levels, needs and relationships evolve over simulated days. It’s perfect for exploring emergent social dynamics without any graphical assets—just pure code and console output.
 
-## Potentisal file structure
+---
 
-```python
-soul/
-├── main.py           # Simulation loop
-├── person.py         # Person class and mood logic
-├── world.py          # World, social environment
-├── event.py          # Event generation logic
-├── utils.py          # Helper functions
-├── log.py (optional) # Logging / save / load
+## 🚀 Features
+
+- **Agent model** with `name`, `age`, `mood`, `energy`, and dynamic `relationships`  
+- **Event system** (eat, read, nap) with per-agent cooldowns :contentReference[oaicite:0]{index=0}  
+- **Customizable “tick” loop**: advance time and fire a global `on_tick_update` event :contentReference[oaicite:1]{index=1}  
+- **Singleton logger**  
+  - Records per-tick mood/energy histories  
+  - Logs named events with timestamps  
+  - Saves snapshots & detailed logs as JSON :contentReference[oaicite:2]{index=2}  
+- **Plotting utilities**:  
+  - Separate windows for Mood and Energy trends, navigable with toolbar arrows :contentReference[oaicite:3]{index=3}  
+- **Easy extension points**: add new events, personalities, world zones
+
+---
+
+## 💾 Installation
+
+1. **Clone** this repository  
+   ```bash
+   git clone https://github.com/your-org/soul.git
+   cd soul
+````
+
+2. **Create & activate** a virtual environment
+
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+3. **Install** dependencies
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+   > *Currently, SOUL depends only on the Python standard library and Matplotlib.*
+
+---
+
+## ⚙️ Usage
+
+1. **Generate & run** the simulation:
+
+   ```bash
+   python main.py
+   ```
+
+   This will:
+
+   * Spawn 5 random agents (`generate_people`)&#x20;
+   * Advance through 5 days of 24-hour ticks
+   * Log every agent’s state and actions
+   * Save:
+
+     * `simulation_snapshot.json` (world state)
+     * `detailed_simulation_events.json` (event log)
+   * Pop up two plot windows (Mood & Energy trends)
+
+2. **Explorer mode** (interactive):
+   Open a Python REPL, import classes & functions:
+
+   ```python
+   >>> from world import World
+   >>> from person import Person
+   >>> from utils import Event
+   >>> w = World()
+   >>> w.on_tick_update.subscribe(lambda: print("Tick fired!"))
+   ```
+
+3. **Customize**
+
+   * Add new events in `event.py`
+   * Tweak logging levels in `log.py`
+   * Hook into `world.on_tick_update` for custom behaviors
+
+---
+
+## 📂 Project Structure
 
 ```
+soul/
+├── main.py            # Entry point & simulation loop
+├── person.py          # Agent class (mood, energy, actions)
+├── world.py           # World class & tick logic
+├── event.py           # Event definitions & cooldown updater
+├── utils.py           # Event bus & name generator
+├── log.py             # Logger, snapshot & plotting functions
+├── simulation_data/   # Auto-generated JSON snapshots & logs
+└── requirements.txt   # (empty if no external deps)
+```
 
-## Ideas
-- **Activities**: People have different effects when they do an activity : for example person A will gain between 0 and 10 happiness when they go to the cinema, while person B will gain between 0 and 5 happiness.
+---
+
+## 🔧 Extending SOUL
+
+1. **New Agent Actions**
+
+   * In `person.py`, define methods (e.g., `def socialize(self, other): …`)
+   * Register in `events` list in `event.py`
+
+2. **Per-agent Event Hooks**
+
+   ```python
+   alice = Person("Alice", 30)
+   alice.on_eat = Event()
+   alice.on_eat.subscribe(lambda: print("Yum!"))
+   ```
+
+3. **Custom World Zones**
+
+   * Add a `zones` field to `World`
+   * Fire zone-specific events in `update_tick_counter`
+
+---
+
+## 📝 License
+
+MIT © 2025 Wapeto
