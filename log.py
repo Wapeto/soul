@@ -72,6 +72,39 @@ class Logger:
         self.person_mood_history = defaultdict(lambda: defaultdict(int))
         self.person_energy_history = defaultdict(lambda: defaultdict(int))
 
+    def export_daily_statistics(self, filename: str):
+        """Export per-person daily averages for mood and energy to a JSON file."""
+        TICKS_PER_DAY = 24
+
+        def compute_daily_avg(raw):
+            daily = defaultdict(lambda: defaultdict(list))
+            for name, hist in raw.items():
+                for tick, val in hist.items():
+                    day = tick // TICKS_PER_DAY
+                    daily[name][day].append(val)
+            for name, days in daily.items():
+                for d, vals in days.items():
+                    days[d] = sum(vals) / len(vals)
+            return daily
+
+        daily_mood = compute_daily_avg(self.get_mood_history())
+        daily_energy = compute_daily_avg(self.get_energy_history())
+
+        combined = defaultdict(dict)
+        for name, days in daily_mood.items():
+            for d, avg in days.items():
+                combined[name].setdefault(d, {})['mood'] = avg
+        for name, days in daily_energy.items():
+            for d, avg in days.items():
+                combined[name].setdefault(d, {})['energy'] = avg
+
+        output_dir = "simulation_data"
+        os.makedirs(output_dir, exist_ok=True)
+        filepath = os.path.join(output_dir, filename)
+        with open(filepath, 'w') as f:
+            json.dump(combined, f, indent=4)
+        print(f"Daily statistics exported to {filepath}")
+
 
 def save_simulation_data(world: World, filename: str = "simulation_snapshot.json"):
     """
