@@ -36,12 +36,13 @@ def main_loop():
             chosen_event_name = choose_random_event(p)
             mood_after = p.mood
             energy_after = p.energy
-            if chosen_event_name:  # Only log if an event actually occurred
+            chosen_event_name = choose_random_event(p, world)
+           if chosen_event_name:  # Only log if an event actually occurred
                 logger.log_event(
                     "action",
                     f"{p.name} performed {chosen_event_name}",
                     p.name,
-                    {
+                   {
                         "mood_before": mood_before,
                         "energy_before": energy_before,
                         "mood_after": mood_after,
@@ -59,6 +60,7 @@ def main_loop():
     # After the loop, save data and plot graphs
     save_simulation_data(world, "final_simulation_state.json")
     logger.save_logs_to_file("detailed_simulation_events.json")
+    logger.export_daily_statistics("daily_statistics.json")
 
     plot_all_trends(logger, world) # Call the new combined plotting function
 
