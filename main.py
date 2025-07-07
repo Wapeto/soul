@@ -31,9 +31,23 @@ def main_loop():
 
         for p in world.people:
             # Add a log entry for chosen event
+            mood_before = p.mood
+            energy_before = p.energy
             chosen_event_name = choose_random_event(p)
-            if chosen_event_name: # Only log if an event actually occurred  
-                logger.log_event("action", f"{p.name} performed {chosen_event_name}", p.name, {"mood_before": p.mood, "energy_before": p.energy})
+            mood_after = p.mood
+            energy_after = p.energy
+            if chosen_event_name:  # Only log if an event actually occurred
+                logger.log_event(
+                    "action",
+                    f"{p.name} performed {chosen_event_name}",
+                    p.name,
+                    {
+                        "mood_before": mood_before,
+                        "energy_before": energy_before,
+                        "mood_after": mood_after,
+                        "energy_after": energy_after,
+                    },
+                )
 
         update_event_cooldowns(world)
         world.update_tick_counter()
