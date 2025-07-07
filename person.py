@@ -9,6 +9,19 @@ class Person:
     relationships: dict=field(default_factory=dict)
     event_cooldown:int = 0
 
+    def add_relationship(self, other_name: str, initial: int = 0):
+        """Ensure a relationship entry exists with another person."""
+        if other_name not in self.relationships:
+            self.relationships[other_name] = initial
+
+    def remove_relationship(self, other_name: str):
+        """Remove a relationship entry if present."""
+        self.relationships.pop(other_name, None)
+
+    def get_relationship(self, other_name: str):
+        """Return the relationship value with another person or ``None``."""
+        return self.relationships.get(other_name)
+
     def print_stats(self):
         print(f"\n{self.name}\nMood: {self.mood}\nEnergy: {self.energy}")
 
@@ -29,8 +42,7 @@ class Person:
         print(f"{self.name} just took a nap")
 
     def socialize(self, other: 'Person'):
-        if other.name not in self.relationships:
-            self.relationships[other.name] = 0
+        self.add_relationship(other.name)
         self.relationships[other.name] += 1
         self.mood = min(self.mood + 15, 100)
         other.mood = min(other.mood + 15, 100)
